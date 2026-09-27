@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Settings, ShieldCheck, Download, Upload, Check, Database } from 'lucide-react';
+import { X, Settings, ShieldCheck, Download, Upload, Check } from 'lucide-react';
 import { AppSettings } from '../types';
 
 interface SettingsModalProps {
@@ -139,38 +139,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
               </label>
             </div>
-          </div>
-
-          {/* Internal Web Database Status */}
-          <div className="pt-3 border-t border-slate-800 bg-amber-950/20 border border-amber-500/20 p-3 rounded-xl space-y-1">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Database className="w-4 h-4 text-amber-400" />
-                <span className="font-bold text-slate-100 text-xs">Base de Datos Interna de la Web (IndexedDB)</span>
-              </div>
-              <span className="text-[10px] font-mono text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
-                Activa • Almacenamiento Local Permanente
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-300">
-              Guarda todos los datos permanentemente en la base de datos interna del navegador. Funciona de manera autónoma, sin conexión y en despliegues estáticos (como GitHub Pages).
-            </p>
-          </div>
-
-          {/* Cloud Database Sync Status */}
-          <div className="pt-3 border-t border-slate-800 bg-emerald-950/20 border border-emerald-500/20 p-3 rounded-xl space-y-1">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="font-bold text-slate-100 text-xs">Base de Datos en la Nube (Firebase Firestore)</span>
-              </div>
-              <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
-                En Línea • Multidispositivo
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-300">
-              Todos los datos, conductores, vanes, horarios y turnos se sincronizan automáticamente en tiempo real entre todos tus dispositivos.
-            </p>
           </div>
 
           {/* Backup / Export Section */}

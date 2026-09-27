@@ -8,8 +8,7 @@ import {
   Layers,
   Settings,
   RotateCcw,
-  Sparkles,
-  Database
+  Sparkles
 } from 'lucide-react';
 import { WeekSelector } from './WeekSelector';
 
@@ -24,7 +23,6 @@ interface NavbarProps {
   stationCode: string;
   onOpenSettings: () => void;
   onResetData: () => void;
-  isCloudConnected?: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -35,8 +33,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   dspName,
   stationCode,
   onOpenSettings,
-  onResetData,
-  isCloudConnected = true
+  onResetData
 }) => {
   return (
     <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-800 text-slate-100 shadow-lg">
@@ -56,19 +53,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
                   {stationCode}
                 </span>
-                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30" title="Base de Datos Interna IndexedDB activa en el navegador">
-                  <Database className="w-3 h-3 text-amber-400" />
-                  <span>DB Interna</span>
-                </span>
-                {isCloudConnected && (
-                  <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30" title="Sincronización en la nube activa">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>Nube Sync</span>
-                  </span>
-                )}
               </div>
               <p className="text-[11px] text-slate-400 hidden sm:block">
-                Amazon Delivery Service Partner • Base de Datos Multidispositivo en Tiempo Real
+                Amazon Delivery Service Partner • Sistema de Operaciones Diarias
               </p>
             </div>
           </div>

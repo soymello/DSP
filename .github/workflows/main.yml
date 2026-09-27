@@ -29,7 +29,8 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm install
+        # Se agrega --legacy-peer-deps para resolver el conflicto de versiones
+        run: npm install --legacy-peer-deps
 
       - name: Build
         run: npx vite build

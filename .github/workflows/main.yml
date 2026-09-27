@@ -2,7 +2,7 @@ name: Deploy Vite app to GitHub Pages
 
 on:
   push:
-    branches: ["main"] # Cambia a "master" si tu rama principal se llama así
+    branches: ["main", "master"]
 
 permissions:
   contents: read
@@ -26,13 +26,13 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
-        run: npm ci || npm install
+        run: npm install
 
       - name: Build
-        run: npm run build
+        run: npx vite build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -40,7 +40,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist' # Vite genera los archivos estáticos en la carpeta dist
+          path: './dist'
 
       - name: Deploy to GitHub Pages
         id: deployment

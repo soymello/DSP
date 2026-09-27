@@ -1,0 +1,6 @@
+{
+  "name": "DSP Ops - Amazon DSP Fleet & Dispatch Hub",
+  "description": "Sistema de gestión operativa para Amazon DSP: Schedule semanal a 50 años, Truck Assignment diario, cálculo de SPR, control de Lunch, Timesheet para nómina e Inventario de Flota.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

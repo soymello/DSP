@@ -1,0 +1,179 @@
+{
+  "entities": {
+    "dsp_settings": {
+      "title": "DSP Settings",
+      "description": "General settings for the DSP operation",
+      "type": "object",
+      "properties": {
+        "dspName": { "type": "string", "description": "Name of the DSP company" },
+        "stationCode": { "type": "string", "description": "Amazon Delivery Station code (e.g. DFL4)" },
+        "alertMissingEquipment": { "type": "boolean", "description": "Alert if equipment is missing" },
+        "alertLunchDelay": { "type": "boolean", "description": "Alert if lunch is taken late" },
+        "alertLunchDuration": { "type": "boolean", "description": "Alert if lunch duration is non-compliant" },
+        "updatedAt": { "type": "string", "description": "Last update ISO timestamp" }
+      },
+      "required": ["dspName", "stationCode"]
+    },
+    "driver": {
+      "title": "Driver",
+      "description": "Delivery Associate profile and contact details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique driver ID" },
+        "name": { "type": "string", "description": "Full name of the driver" },
+        "phone": { "type": "string", "description": "Phone number" },
+        "email": { "type": "string", "description": "Email address" },
+        "hireDate": { "type": "string", "description": "Hire date YYYY-MM-DD" },
+        "notes": { "type": "string", "description": "Certifications or notes" },
+        "updatedAt": { "type": "string", "description": "Last update ISO timestamp" }
+      },
+      "required": ["id", "name", "hireDate"]
+    },
+    "vehicle": {
+      "title": "Vehicle",
+      "description": "Fleet van or truck inventory item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique vehicle ID" },
+        "number": { "type": "string", "description": "Van identifier number" },
+        "type": { "type": "string", "description": "Vehicle category", "enum": ["Step Van", "Custom Van", "Camión", "EV - Eléctrico", "Auto Rentado"] },
+        "vin": { "type": "string", "description": "Vehicle Identification Number" },
+        "licensePlate": { "type": "string", "description": "License plate" },
+        "status": { "type": "string", "description": "Operating status", "enum": ["Operativo", "En proceso", "Inactivo", "En el Taller", "Otro"] },
+        "updatedAt": { "type": "string", "description": "Last update ISO timestamp" }
+      },
+      "required": ["id", "number", "type", "vin", "licensePlate", "status"]
+    },
+    "device": {
+      "title": "Device",
+      "description": "Delivery scanner phone / device",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique device ID" },
+        "number": { "type": "string", "description": "Device number" },
+        "serial": { "type": "string", "description": "Serial number" },
+        "model": { "type": "string", "description": "Device model" },
+        "status": { "type": "string", "description": "Device status", "enum": ["Operativo", "En Reparación", "Perdido"] },
+        "updatedAt": { "type": "string", "description": "Last update ISO timestamp" }
+      },
+      "required": ["id", "number", "serial", "model", "status"]
+    },
+    "battery": {
+      "title": "Battery",
+      "description": "Powerbank battery pack",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique battery ID" },
+        "code": { "type": "string", "description": "Battery code or label" },
+        "capacity": { "type": "string", "description": "Battery capacity description" },
+        "status": { "type": "string", "description": "Battery status", "enum": ["Operativo", "Baja"] },
+        "updatedAt": { "type": "string", "description": "Last update ISO timestamp" }
+      },
+      "required": ["id", "code", "capacity", "status"]
+    },
+    "schedule_entry": {
+      "title": "Schedule Entry",
+      "description": "Weekly schedule shift for a driver",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique schedule entry ID" },
+        "driverId": { "type": "string", "description": "Driver ID" },
+        "date": { "type": "string", "description": "Date YYYY-MM-DD" },
+        "status": { "type": "string", "description": "Shift status", "enum": ["Trabaja", "Descanso", "Call-Out", "Vancancy", "Standby"] },
+        "comment": { "type": "string", "description": "Shift comment e.g. 9:15 AM or CORTEX" },
+        "updatedAt": { "type": "string", "description": "Last update ISO timestamp" }
+      },
+      "required": ["id", "driverId", "date", "status"]
+    },
+    "assignment": {
+      "title": "Assignment",
+      "description": "Daily truck assignment record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique assignment ID" },
+        "date": { "type": "string", "description": "Date YYYY-MM-DD" },
+        "driverId": { "type": "string", "description": "Driver ID" },
+        "vanNumber": { "type": "string", "description": "Assigned van number" },
+        "deviceNumber": { "type": "string", "description": "Assigned device number" },
+        "batteryNumber": { "type": "string", "description": "Assigned battery number" },
+        "status": { "type": "string", "description": "Assignment status" },
+        "clockIn": { "type": "string", "description": "Clock In time HH:mm" },
+        "lunchStart": { "type": "string", "description": "Lunch In time HH:mm" },
+        "lunchEnd": { "type": "string", "description": "Lunch Out time HH:mm" },
+        "clockOut": { "type": "string", "description": "Clock Out time HH:mm" },
+        "routeCode": { "type": "string", "description": "Route code e.g. CX12" },
+        "comment": { "type": "string", "description": "Assignment comment" },
+        "updatedAt": { "type": "string", "description": "Last update ISO timestamp" }
+      },
+      "required": ["id", "date", "driverId", "status"]
+    },
+    "corte_config": {
+      "title": "Corte Config",
+      "description": "Daily corte and route reduction configuration",
+      "type": "object",
+      "properties": {
+        "dateIso": { "type": "string", "description": "Date YYYY-MM-DD" },
+        "amazonRoutes": { "type": "number", "description": "Amazon routes count" },
+        "extraDrivers": { "type": "number", "description": "Extra standby drivers" },
+        "corteDrivers": { "type": "number", "description": "Corte drivers count" },
+        "rescueDrivers": { "type": "number", "description": "Rescue drivers count" },
+        "notes": { "type": "string", "description": "Notes for the day" },
+        "applied": { "type": "boolean", "description": "Whether corte is applied to truck assignment" },
+        "confirmedDriverIds": { "type": "array", "description": "List of confirmed working driver IDs" },
+        "updatedAt": { "type": "string", "description": "Last update ISO timestamp" }
+      },
+      "required": ["dateIso", "amazonRoutes", "extraDrivers", "corteDrivers", "rescueDrivers", "applied"]
+    },
+    "daily_package": {
+      "title": "Daily Package",
+      "description": "Daily package counts for SPR calculation",
+      "type": "object",
+      "properties": {
+        "dateIso": { "type": "string", "description": "Date YYYY-MM-DD" },
+        "cx": { "type": "number", "description": "CX packages count" },
+        "flex": { "type": "number", "description": "Flex packages count" },
+        "total": { "type": "number", "description": "Total packages count" },
+        "updatedAt": { "type": "string", "description": "Last update ISO timestamp" }
+      },
+      "required": ["dateIso", "cx", "flex", "total"]
+    }
+  },
+  "firestore": {
+    "/app_settings/{settingId}": {
+      "schema": { "$ref": "#/entities/dsp_settings" },
+      "description": "DSP Application Settings document"
+    },
+    "/drivers/{driverId}": {
+      "schema": { "$ref": "#/entities/driver" },
+      "description": "Active and registered drivers collection"
+    },
+    "/vehicles/{vehicleId}": {
+      "schema": { "$ref": "#/entities/vehicle" },
+      "description": "Fleet vehicles and trucks collection"
+    },
+    "/devices/{deviceId}": {
+      "schema": { "$ref": "#/entities/device" },
+      "description": "Mobile phones and scanners collection"
+    },
+    "/batteries/{batteryId}": {
+      "schema": { "$ref": "#/entities/battery" },
+      "description": "Powerbank batteries collection"
+    },
+    "/schedules/{scheduleId}": {
+      "schema": { "$ref": "#/entities/schedule_entry" },
+      "description": "Weekly driver schedule entries"
+    },
+    "/assignments/{assignmentId}": {
+      "schema": { "$ref": "#/entities/assignment" },
+      "description": "Daily truck assignments"
+    },
+    "/cortes/{dateIso}": {
+      "schema": { "$ref": "#/entities/corte_config" },
+      "description": "Daily route corte configurations"
+    },
+    "/daily_packages/{dateIso}": {
+      "schema": { "$ref": "#/entities/daily_package" },
+      "description": "Daily package counts"
+    }
+  }
+}

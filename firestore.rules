@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128;
+    }
+
+    // App Settings
+    match /app_settings/{settingId} {
+      allow read, write: if isValidId(settingId);
+    }
+
+    // Drivers
+    match /drivers/{driverId} {
+      allow read, write: if isValidId(driverId);
+    }
+
+    // Vehicles
+    match /vehicles/{vehicleId} {
+      allow read, write: if isValidId(vehicleId);
+    }
+
+    // Devices
+    match /devices/{deviceId} {
+      allow read, write: if isValidId(deviceId);
+    }
+
+    // Batteries
+    match /batteries/{batteryId} {
+      allow read, write: if isValidId(batteryId);
+    }
+
+    // Weekly Schedules
+    match /schedules/{scheduleId} {
+      allow read, write: if isValidId(scheduleId);
+    }
+
+    // Daily Truck Assignments
+    match /assignments/{assignmentId} {
+      allow read, write: if isValidId(assignmentId);
+    }
+
+    // Cortes
+    match /cortes/{dateIso} {
+      allow read, write: if isValidId(dateIso);
+    }
+
+    // Daily Packages
+    match /daily_packages/{dateIso} {
+      allow read, write: if isValidId(dateIso);
+    }
+
+    // Connection testing
+    match /test/{docId} {
+      allow read, write: if isValidId(docId);
+    }
+  }
+}

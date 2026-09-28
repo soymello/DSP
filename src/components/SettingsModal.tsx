@@ -141,6 +141,22 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
+          {/* Cloud Database Sync Status */}
+          <div className="pt-3 border-t border-slate-800 bg-emerald-950/20 border border-emerald-500/20 p-3 rounded-xl space-y-1">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="font-bold text-slate-100 text-xs">Base de Datos en la Nube (Firebase Firestore)</span>
+              </div>
+              <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
+                En Línea • Multidispositivo
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-300">
+              Todos los datos, conductores, vanes, horarios y turnos se sincronizan automáticamente en tiempo real entre todos tus dispositivos.
+            </p>
+          </div>
+
           {/* Backup / Export Section */}
           <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
             <div>

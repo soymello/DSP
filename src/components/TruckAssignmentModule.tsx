@@ -116,6 +116,16 @@ export const TruckAssignmentModule: React.FC<TruckAssignmentModuleProps> = ({
     assignment: DailyAssignment;
     driverName: string;
   } | null>(null);
+  const [nonOperativeWarning, setNonOperativeWarning] = useState<string | null>(null);
+
+  // Solamente las vanes en estado Operativo se pueden asignar en Truck Assignment
+  const operativeVehicles = useMemo(() => {
+    return vehicles.filter(v => v.status === 'Operativo');
+  }, [vehicles]);
+
+  const vehicleMap = useMemo(() => {
+    return new Map(vehicles.map(v => [v.number.trim().toLowerCase(), v]));
+  }, [vehicles]);
 
   // Comment Options state (stored in localStorage, same as ScheduleModule)
   const [commentOptions, setCommentOptions] = useState<ScheduleCommentOption[]>(() => {
@@ -446,6 +456,19 @@ export const TruckAssignmentModule: React.FC<TruckAssignmentModuleProps> = ({
     field: keyof DailyAssignment,
     value: string
   ) => {
+    // Validación requerida por el usuario: Solamente se pueden asignar las vanes que están en estado Operativo
+    if (field === 'vanNumber' && value.trim()) {
+      const trimmed = value.trim();
+      const matchedVeh = vehicleMap.get(trimmed.toLowerCase());
+      if (matchedVeh && matchedVeh.status !== 'Operativo') {
+        setNonOperativeWarning(
+          `La Van "${matchedVeh.number}" no puede ser asignada porque está en estado "${matchedVeh.status}". Solamente se pueden asignar unidades en estado Operativo.`
+        );
+        setTimeout(() => setNonOperativeWarning(null), 5000);
+        return;
+      }
+    }
+
     onUpdateAssignment({
       ...asg,
       [field]: value
@@ -771,6 +794,23 @@ export const TruckAssignmentModule: React.FC<TruckAssignmentModuleProps> = ({
         </div>
       </div>
 
+      {/* Alerta de Van No Operativa si el usuario intenta asignar una van no operativa */}
+      {nonOperativeWarning && (
+        <div className="p-3 bg-red-950/90 border border-red-500/80 rounded-xl text-red-200 text-xs flex items-center justify-between shadow-xl animate-in fade-in duration-150">
+          <div className="flex items-center gap-2 font-medium">
+            <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+            <span>{nonOperativeWarning}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setNonOperativeWarning(null)}
+            className="p-1 text-red-400 hover:text-white rounded-lg hover:bg-red-900/50 transition-colors cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Tarjetas / Casillas Minimalistas */}
       <div className="space-y-1.5">
         {dayAssignments.length === 0 ? (
@@ -838,6 +878,8 @@ export const TruckAssignmentModule: React.FC<TruckAssignmentModuleProps> = ({
               const net = calculateNetHours(asg.clockIn, asg.lunchStart, asg.lunchEnd, asg.clockOut);
               const lunchMin = calculateLunchDuration(asg.lunchStart, asg.lunchEnd);
               const isCallOut = asg.status === 'Call Out';
+              const assignedVehicle = asg.vanNumber ? vehicleMap.get(asg.vanNumber.trim().toLowerCase()) : undefined;
+              const isVanNonOperative = Boolean(assignedVehicle && assignedVehicle.status !== 'Operativo');
 
               return (
                 <div
@@ -845,6 +887,8 @@ export const TruckAssignmentModule: React.FC<TruckAssignmentModuleProps> = ({
                   className={`rounded-xl border transition-all py-1.5 px-3 text-xs overflow-x-auto ${
                     isCallOut
                       ? 'bg-red-950/20 border-red-900/50 opacity-75'
+                      : isVanNonOperative
+                      ? 'bg-slate-900/95 border-red-500/60 shadow-xs shadow-red-500/10'
                       : compliance.hasMissingEquipment
                       ? 'bg-slate-900/95 border-amber-500/60 shadow-xs shadow-amber-500/10'
                       : compliance.hasLunchDelayWarning || compliance.hasLunchDurationWarning
@@ -923,7 +967,7 @@ export const TruckAssignmentModule: React.FC<TruckAssignmentModuleProps> = ({
                       })()}
                     </div>
 
-                    {/* 3. Van / Camión */}
+                    {/* 3. Van / Camión (Solamente Operativo permitido) */}
                     <div className="w-24 shrink-0">
                       <input
                         type="text"
@@ -932,8 +976,17 @@ export const TruckAssignmentModule: React.FC<TruckAssignmentModuleProps> = ({
                         onChange={(e) => handleFieldChange(asg, 'vanNumber', e.target.value)}
                         placeholder="Nº Van"
                         className={`w-full bg-slate-800 border rounded-lg px-2 py-1 text-xs text-slate-100 font-mono focus:outline-none focus:border-amber-400 ${
-                          !asg.vanNumber && !isCallOut ? 'border-amber-500/50 bg-amber-950/10' : 'border-slate-700'
+                          isVanNonOperative
+                            ? 'border-red-500 bg-red-950/30 text-red-200'
+                            : !asg.vanNumber && !isCallOut
+                            ? 'border-amber-500/50 bg-amber-950/10'
+                            : 'border-slate-700'
                         }`}
+                        title={
+                          isVanNonOperative
+                            ? `¡Atención! La Van ${asg.vanNumber} está en estado "${assignedVehicle?.status}". Solamente se pueden asignar unidades en estado Operativo.`
+                            : 'Selecciona o escribe el número de una Van Operativa'
+                        }
                       />
                     </div>
 
@@ -1048,8 +1101,14 @@ export const TruckAssignmentModule: React.FC<TruckAssignmentModuleProps> = ({
                   </div>
 
                   {/* Compact Operational Warnings if any */}
-                  {(compliance.hasMissingEquipment || compliance.hasLunchDelayWarning || compliance.hasLunchDurationWarning) && (
+                  {(compliance.hasMissingEquipment || compliance.hasLunchDelayWarning || compliance.hasLunchDurationWarning || isVanNonOperative) && (
                     <div className="mt-1 pt-1 border-t border-slate-800/60 flex flex-wrap gap-2 text-[10.5px]">
+                      {isVanNonOperative && (
+                        <span className="text-red-400 font-bold flex items-center gap-1">
+                          <AlertTriangle className="w-3 h-3 text-red-400" />
+                          Van {asg.vanNumber} NO operativa ({assignedVehicle?.status}) - Solo se permiten vanes Operativas
+                        </span>
+                      )}
                       {compliance.hasMissingEquipment && (
                         <span className="text-amber-300 flex items-center gap-1">
                           <AlertTriangle className="w-3 h-3 text-amber-400" />
@@ -1077,10 +1136,12 @@ export const TruckAssignmentModule: React.FC<TruckAssignmentModuleProps> = ({
         )}
       </div>
 
-      {/* Datalists for quick autocompletion */}
+      {/* Datalists for quick autocompletion - Solamente vanes en estado Operativo */}
       <datalist id="van-options">
-        {vehicles.map(v => (
-          <option key={v.id} value={v.number}>{v.type} ({v.licensePlate})</option>
+        {operativeVehicles.map(v => (
+          <option key={v.id} value={v.number}>
+            {v.type} ({v.licensePlate}) • Operativo
+          </option>
         ))}
       </datalist>
       <datalist id="device-options">

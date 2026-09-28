@@ -714,17 +714,39 @@ export const FleetInventoryModule: React.FC<FleetInventoryModuleProps> = ({
 
               <div>
                 <label className="block text-slate-300 font-semibold mb-1">Estado de Flota</label>
-                <select
-                  value={vehicleForm.status}
-                  onChange={(e) => setVehicleForm({ ...vehicleForm, status: e.target.value as VehicleStatus })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-100 focus:border-amber-400 focus:outline-none"
-                >
-                  <option value="Operativo">Operativo</option>
-                  <option value="En proceso">En proceso</option>
-                  <option value="Inactivo">Inactivo</option>
-                  <option value="En el Taller">En el Taller</option>
-                  <option value="Otro">Otro</option>
-                </select>
+                <div className="flex flex-wrap gap-1.5">
+                  {(
+                    [
+                      { status: 'Operativo' as VehicleStatus, label: 'Operativo', dotColor: 'bg-emerald-400' },
+                      { status: 'En proceso' as VehicleStatus, label: 'En proceso', dotColor: 'bg-amber-400' },
+                      { status: 'Inactivo' as VehicleStatus, label: 'Inactivo', dotColor: 'bg-slate-400' },
+                      { status: 'En el Taller' as VehicleStatus, label: 'En el Taller', dotColor: 'bg-red-400' },
+                      { status: 'Otro' as VehicleStatus, label: 'Otro', dotColor: 'bg-purple-400' }
+                    ]
+                  ).map((opt) => (
+                    <button
+                      key={opt.status}
+                      type="button"
+                      onClick={() => setVehicleForm({ ...vehicleForm, status: opt.status })}
+                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border transition-all cursor-pointer ${
+                        vehicleForm.status === opt.status
+                          ? opt.status === 'Operativo'
+                            ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-xs ring-1 ring-emerald-400/50'
+                            : opt.status === 'En proceso'
+                            ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-xs ring-1 ring-amber-400/50'
+                            : opt.status === 'En el Taller'
+                            ? 'bg-red-500 text-white border-red-400 shadow-xs ring-1 ring-red-400/50'
+                            : opt.status === 'Otro'
+                            ? 'bg-purple-500 text-white border-purple-400 shadow-xs ring-1 ring-purple-400/50'
+                            : 'bg-slate-300 text-slate-950 border-slate-200 shadow-xs ring-1 ring-slate-400/50'
+                          : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-slate-200 hover:border-slate-600'
+                      }`}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${opt.dotColor}`} />
+                      <span>{opt.label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <button
@@ -786,7 +808,7 @@ export const FleetInventoryModule: React.FC<FleetInventoryModuleProps> = ({
                         {veh.vin}
                       </td>
                       <td className="py-2.5 px-3">
-                        <div className="relative">
+                        <div className="relative inline-block">
                           <button
                             type="button"
                             onClick={() =>
@@ -794,7 +816,7 @@ export const FleetInventoryModule: React.FC<FleetInventoryModuleProps> = ({
                                 activeVehicleDropdownId === veh.id ? null : veh.id
                               )
                             }
-                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border shadow-xs ${
+                            className={`px-2.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border shadow-xs ${
                               veh.status === 'Operativo'
                                 ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/50 hover:bg-emerald-900/60'
                                 : veh.status === 'En proceso'
@@ -821,45 +843,80 @@ export const FleetInventoryModule: React.FC<FleetInventoryModuleProps> = ({
                               }`}
                             />
                             <span>{veh.status}</span>
-                            <ChevronDown className="w-3 h-3 opacity-60 ml-0.5" />
                           </button>
 
-                          {/* Popover con las 5 opciones requeridas por el usuario */}
+                          {/* Botón flotante pequeño con las opciones justo al frente (sin extender a los costados) */}
                           {activeVehicleDropdownId === veh.id && (
-                            <div className="absolute left-0 top-full mt-1 w-44 bg-slate-950 border border-slate-700 rounded-xl shadow-2xl z-50 p-1.5 animate-in fade-in zoom-in-95 duration-100">
-                              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1 border-b border-slate-800 mb-1">
-                                Estado del Vehículo
+                            <>
+                              {/* Backdrop invisible para cerrar al hacer clic afuera */}
+                              <div
+                                className="fixed inset-0 z-40 cursor-default"
+                                onClick={() => setActiveVehicleDropdownId(null)}
+                              />
+
+                              {/* Mini-panel flotante compacto directamente al frente */}
+                              <div className="absolute left-0 -top-1 z-50 p-1.5 bg-slate-950/98 border border-slate-700 rounded-xl shadow-2xl backdrop-blur-md w-[156px] animate-in fade-in zoom-in-95 duration-100 ring-1 ring-white/10">
+                                <div className="grid grid-cols-2 gap-1 text-[10px]">
+                                  {[
+                                    {
+                                      status: 'Operativo' as VehicleStatus,
+                                      label: 'Operativo',
+                                      btnClass: 'bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 border-emerald-500/40',
+                                      activeClass: 'bg-emerald-500 text-slate-950 ring-1 ring-emerald-300 font-black',
+                                      dotColor: 'bg-emerald-400'
+                                    },
+                                    {
+                                      status: 'En proceso' as VehicleStatus,
+                                      label: 'Proceso',
+                                      btnClass: 'bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border-amber-500/40',
+                                      activeClass: 'bg-amber-500 text-slate-950 ring-1 ring-amber-300 font-black',
+                                      dotColor: 'bg-amber-400'
+                                    },
+                                    {
+                                      status: 'Inactivo' as VehicleStatus,
+                                      label: 'Inactivo',
+                                      btnClass: 'bg-slate-800 hover:bg-slate-300 text-slate-300 hover:text-slate-950 border-slate-600',
+                                      activeClass: 'bg-slate-300 text-slate-950 ring-1 ring-slate-400 font-black',
+                                      dotColor: 'bg-slate-400'
+                                    },
+                                    {
+                                      status: 'En el Taller' as VehicleStatus,
+                                      label: 'Taller',
+                                      btnClass: 'bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-slate-950 border-red-500/40',
+                                      activeClass: 'bg-red-500 text-white ring-1 ring-red-300 font-black',
+                                      dotColor: 'bg-red-400'
+                                    },
+                                    {
+                                      status: 'Otro' as VehicleStatus,
+                                      label: 'Otro',
+                                      btnClass: 'bg-purple-500/20 hover:bg-purple-500 text-purple-300 hover:text-slate-950 border-purple-500/40 col-span-2',
+                                      activeClass: 'bg-purple-500 text-white ring-1 ring-purple-300 font-black col-span-2',
+                                      dotColor: 'bg-purple-400'
+                                    }
+                                  ].map((opt) => {
+                                    const isCurrent = veh.status === opt.status;
+                                    return (
+                                      <button
+                                        key={opt.status}
+                                        type="button"
+                                        onClick={() => {
+                                          onUpdateVehicle({ ...veh, status: opt.status });
+                                          setActiveVehicleDropdownId(null);
+                                        }}
+                                        className={`flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg text-[10px] font-bold border transition-all cursor-pointer shadow-xs active:scale-95 ${
+                                          isCurrent ? opt.activeClass : opt.btnClass
+                                        }`}
+                                        title={`Cambiar a ${opt.status}`}
+                                      >
+                                        <span className={`w-1.5 h-1.5 rounded-full ${isCurrent ? 'bg-current' : opt.dotColor}`} />
+                                        <span className="truncate">{opt.label}</span>
+                                        {isCurrent && <Check className="w-2.5 h-2.5 ml-0.5 shrink-0" />}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
                               </div>
-                              <div className="space-y-0.5">
-                                {[
-                                  { status: 'Operativo' as VehicleStatus, label: 'Operativo', dotColor: 'bg-emerald-400' },
-                                  { status: 'En proceso' as VehicleStatus, label: 'En proceso', dotColor: 'bg-amber-400' },
-                                  { status: 'Inactivo' as VehicleStatus, label: 'Inactivo', dotColor: 'bg-slate-400' },
-                                  { status: 'En el Taller' as VehicleStatus, label: 'En el Taller', dotColor: 'bg-red-400' },
-                                  { status: 'Otro' as VehicleStatus, label: 'Otro', dotColor: 'bg-purple-400' }
-                                ].map((opt) => (
-                                  <button
-                                    key={opt.status}
-                                    type="button"
-                                    onClick={() => {
-                                      onUpdateVehicle({ ...veh, status: opt.status });
-                                      setActiveVehicleDropdownId(null);
-                                    }}
-                                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs hover:bg-slate-800 transition-colors flex items-center justify-between cursor-pointer ${
-                                      veh.status === opt.status ? 'bg-slate-800/80 font-bold text-white' : 'text-slate-300'
-                                    }`}
-                                  >
-                                    <div className="flex items-center gap-2">
-                                      <span className={`w-2 h-2 rounded-full ${opt.dotColor}`} />
-                                      <span>{opt.label}</span>
-                                    </div>
-                                    {veh.status === opt.status && (
-                                      <Check className="w-3.5 h-3.5 text-amber-400" />
-                                    )}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
+                            </>
                           )}
                         </div>
                       </td>

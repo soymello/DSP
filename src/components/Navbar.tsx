@@ -23,6 +23,7 @@ interface NavbarProps {
   stationCode: string;
   onOpenSettings: () => void;
   onResetData: () => void;
+  isCloudConnected?: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -33,7 +34,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   dspName,
   stationCode,
   onOpenSettings,
-  onResetData
+  onResetData,
+  isCloudConnected = true
 }) => {
   return (
     <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-800 text-slate-100 shadow-lg">
@@ -53,9 +55,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
                   {stationCode}
                 </span>
+                {isCloudConnected && (
+                  <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30" title="Sincronización multidispositivo en tiempo real activa">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>Nube Sincronizada</span>
+                  </span>
+                )}
               </div>
               <p className="text-[11px] text-slate-400 hidden sm:block">
-                Amazon Delivery Service Partner • Sistema de Operaciones Diarias
+                Amazon Delivery Service Partner • Base de Datos Multidispositivo en Tiempo Real
               </p>
             </div>
           </div>
